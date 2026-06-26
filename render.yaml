@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: rinex-api
+    runtime: python
+    repo: https://github.com/sizin-repo/adınız
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0

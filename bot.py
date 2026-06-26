@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import time
-from functools import wraps
 from collections import defaultdict
 import json
+import sys
+import os
 
+# Flask uygulamasını oluştur
 app = Flask(__name__)
 CORS(app)
 
@@ -14,7 +16,6 @@ rate_limits = defaultdict(list)
 
 def rate_limit(max_requests=100, window=900):  # 15 dakika = 900 saniye
     def decorator(f):
-        @wraps(f)
         def decorated_function(*args, **kwargs):
             client_ip = request.remote_addr
             now = time.time()
@@ -76,7 +77,6 @@ def add_api_info(data):
 
 # API endpoint'leri
 @app.route('/api/tc/<tc>', methods=['GET'])
-@rate_limit()
 def get_tc_info(tc):
     try:
         response = requests.get(
@@ -90,7 +90,6 @@ def get_tc_info(tc):
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
 
 @app.route('/api/adsoyad', methods=['GET'])
-@rate_limit()
 def get_adsoyad_info():
     try:
         adi = request.args.get('adi', '')
@@ -109,7 +108,6 @@ def get_adsoyad_info():
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
 
 @app.route('/api/adres/<tc>', methods=['GET'])
-@rate_limit()
 def get_adres_info(tc):
     try:
         response = requests.get(
@@ -123,7 +121,6 @@ def get_adres_info(tc):
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
 
 @app.route('/api/gsmtc/<gsm>', methods=['GET'])
-@rate_limit()
 def get_gsmtc_info(gsm):
     try:
         response = requests.get(
@@ -137,7 +134,6 @@ def get_gsmtc_info(gsm):
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
 
 @app.route('/api/tcgsm/<tc>', methods=['GET'])
-@rate_limit()
 def get_tcgsm_info(tc):
     try:
         response = requests.get(
@@ -151,7 +147,6 @@ def get_tcgsm_info(tc):
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
 
 @app.route('/api/sulale/<tc>', methods=['GET'])
-@rate_limit()
 def get_sulale_info(tc):
     try:
         response = requests.get(
@@ -209,47 +204,21 @@ def home():
                 'ornek': 'https://api-domain.com/api/sulale/12345678901',
                 'aciklama': 'TC kimlik ile sülale/akraba bilgilerini getirir'
             }
-        ],
-        'ornek_kullanim': {
-            'python': """
-import requests
-
-# TC sorgulama
-response = requests.get('https://api-domain.com/api/tc/12345678901')
-print(response.json())
-
-# Ad-Soyad sorgulama
-response = requests.get('https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz')
-print(response.json())
-            """,
-            'javascript': """
-// TC sorgulama
-fetch('https://api-domain.com/api/tc/12345678901')
-  .then(response => response.json())
-  .then(data => console.log(data));
-
-// Ad-Soyad sorgulama
-fetch('https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz')
-  .then(response => response.json())
-  .then(data => console.log(data));
-            """
-        }
+        ]
     })
 
+# Health check endpoint
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok', 'api_sahibi': '@rinexdestek'})
+
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     print("=" * 50)
     print("🚀 rinex API Servisi Başlatılıyor...")
     print("👤 API Sahibi: @rinexdestek")
     print("📦 API Sürüm: 3.7")
     print("⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR")
     print("=" * 50)
-    print("📍 Ana Sayfa: http://localhost:5000/")
-    print("📍 TC Sorgula: http://localhost:5000/api/tc/12345678901")
-    print("📍 Ad-Soyad: http://localhost:5000/api/adsoyad?adi=ali&soyadi=yılmaz")
-    print("📍 Adres: http://localhost:5000/api/adres/12345678901")
-    print("📍 GSM-TC: http://localhost:5000/api/gsmtc/5551234567")
-    print("📍 TC-GSM: http://localhost:5000/api/tcgsm/12345678901")
-    print("📍 Sülale: http://localhost:5000/api/sulale/12345678901")
-    print("=" * 50)
-    print("🌐 Sunucu http://localhost:5000 adresinde çalışıyor...")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    print(f"🌐 Sunucu http://0.0.0.0:{port} adresinde çalışıyor...")
+    app.run(host='0.0.0.0', port=port, debug=False)

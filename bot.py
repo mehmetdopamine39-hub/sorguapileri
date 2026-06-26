@@ -4,23 +4,22 @@ import requests
 import time
 from collections import defaultdict
 import json
-import sys
 import os
+import sys
 
-# Flask uygulamasını oluştur
+# Flask uygulaması
 app = Flask(__name__)
 CORS(app)
 
-# Rate limiting - CloudFlare koruması
+# Rate limiting
 rate_limits = defaultdict(list)
 
-def rate_limit(max_requests=100, window=900):  # 15 dakika = 900 saniye
+def rate_limit(max_requests=100, window=900):
     def decorator(f):
         def decorated_function(*args, **kwargs):
             client_ip = request.remote_addr
             now = time.time()
             
-            # Eski istekleri temizle
             rate_limits[client_ip] = [t for t in rate_limits[client_ip] if now - t < window]
             
             if len(rate_limits[client_ip]) >= max_requests:
@@ -35,7 +34,7 @@ def rate_limit(max_requests=100, window=900):  # 15 dakika = 900 saniye
         return decorated_function
     return decorator
 
-# En güçlü CloudFlare koruması bypass - Headers
+# CloudFlare bypass headers
 def get_headers():
     return {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -57,7 +56,7 @@ def get_headers():
         'Connection': 'keep-alive'
     }
 
-# Google Bot gibi davranan headers
+# Google Bot headers
 def get_google_bot_headers():
     headers = get_headers()
     headers.update({
@@ -67,7 +66,7 @@ def get_google_bot_headers():
     })
     return headers
 
-# API yanıtına eklenecek bilgiler
+# API bilgisi ekle
 def add_api_info(data):
     if isinstance(data, dict):
         data['api_sahibi'] = '@rinexdestek'
@@ -75,7 +74,7 @@ def add_api_info(data):
         data['not'] = 'BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR'
     return data
 
-# API endpoint'leri
+# API Endpoint'leri
 @app.route('/api/tc/<tc>', methods=['GET'])
 def get_tc_info(tc):
     try:
@@ -84,7 +83,10 @@ def get_tc_info(tc):
             headers=get_google_bot_headers(),
             timeout=10
         )
-        data = response.json() if response.text else {}
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+        else:
+            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
         return jsonify(add_api_info(data))
     except Exception as e:
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
@@ -102,7 +104,10 @@ def get_adsoyad_info():
             headers=get_google_bot_headers(),
             timeout=10
         )
-        data = response.json() if response.text else {}
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+        else:
+            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
         return jsonify(add_api_info(data))
     except Exception as e:
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
@@ -115,7 +120,10 @@ def get_adres_info(tc):
             headers=get_google_bot_headers(),
             timeout=10
         )
-        data = response.json() if response.text else {}
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+        else:
+            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
         return jsonify(add_api_info(data))
     except Exception as e:
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
@@ -128,7 +136,10 @@ def get_gsmtc_info(gsm):
             headers=get_google_bot_headers(),
             timeout=10
         )
-        data = response.json() if response.text else {}
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+        else:
+            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
         return jsonify(add_api_info(data))
     except Exception as e:
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
@@ -141,7 +152,10 @@ def get_tcgsm_info(tc):
             headers=get_google_bot_headers(),
             timeout=10
         )
-        data = response.json() if response.text else {}
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+        else:
+            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
         return jsonify(add_api_info(data))
     except Exception as e:
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
@@ -154,7 +168,10 @@ def get_sulale_info(tc):
             headers=get_google_bot_headers(),
             timeout=10
         )
-        data = response.json() if response.text else {}
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+        else:
+            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
         return jsonify(add_api_info(data))
     except Exception as e:
         return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
@@ -204,10 +221,34 @@ def home():
                 'ornek': 'https://api-domain.com/api/sulale/12345678901',
                 'aciklama': 'TC kimlik ile sülale/akraba bilgilerini getirir'
             }
-        ]
+        ],
+        'ornek_kullanim': {
+            'python': """
+import requests
+
+# TC sorgulama
+response = requests.get('https://api-domain.com/api/tc/12345678901')
+print(response.json())
+
+# Ad-Soyad sorgulama
+response = requests.get('https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz')
+print(response.json())
+            """,
+            'javascript': """
+// TC sorgulama
+fetch('https://api-domain.com/api/tc/12345678901')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Ad-Soyad sorgulama
+fetch('https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz')
+  .then(response => response.json())
+  .then(data => console.log(data));
+            """
+        }
     })
 
-# Health check endpoint
+# Health check
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'api_sahibi': '@rinexdestek'})
@@ -220,5 +261,6 @@ if __name__ == '__main__':
     print("📦 API Sürüm: 3.7")
     print("⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR")
     print("=" * 50)
+    print("📌 Python Sürümü:", sys.version)
     print(f"🌐 Sunucu http://0.0.0.0:{port} adresinde çalışıyor...")
     app.run(host='0.0.0.0', port=port, debug=False)

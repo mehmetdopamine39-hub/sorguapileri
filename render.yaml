@@ -5,8 +5,14 @@ services:
     repo: https://github.com/sizin-repo/adınız
     plan: free
     region: frankfurt
-    buildCommand: pip install -r requirements.txt
-    startCommand: python bot.py
+    buildCommand: |
+      python3.11 -m venv .venv
+      source .venv/bin/activate
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: python3.11 bot.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: PATH
+        value: /usr/local/bin:/usr/bin:/bin:/opt/python3.11/bin

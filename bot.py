@@ -1,15 +1,10 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import requests
+import os
 import time
 from collections import defaultdict
-import json
-import os
-import sys
 
-# Flask uygulaması
 app = Flask(__name__)
-CORS(app)
 
 # Rate limiting
 rate_limits = defaultdict(list)
@@ -56,13 +51,11 @@ def get_headers():
         'Connection': 'keep-alive'
     }
 
-# Google Bot headers
 def get_google_bot_headers():
     headers = get_headers()
     headers.update({
         'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
         'From': 'googlebot(at)googlebot.com',
-        'Accept-Language': 'en-US,en;q=0.9'
     })
     return headers
 
@@ -74,110 +67,280 @@ def add_api_info(data):
         data['not'] = 'BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR'
     return data
 
-# API Endpoint'leri
-@app.route('/api/tc/<tc>', methods=['GET'])
-def get_tc_info(tc):
+# ============ ANA API ENDPOINT'LERİ ============
+
+@app.route('/api/tc.php', methods=['GET'])
+@rate_limit()
+def tc_api():
+    """TC ile sorgulama - /api/tc.php?tc=12345678901"""
+    tc = request.args.get('tc', '').strip()
+    
+    if not tc:
+        return jsonify({
+            'success': False,
+            'message': 'TC parametresi gerekli',
+            'usage': '/api/tc.php?tc=TC_NUMARASI',
+            'example': '/api/tc.php?tc=12345678901',
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 400
+    
     try:
         response = requests.get(
             f'https://arastir.vip/api/tc.php?tc={tc}',
             headers=get_google_bot_headers(),
             timeout=10
         )
-        if response.status_code == 200:
-            data = response.json() if response.text else {}
-        else:
-            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
-        return jsonify(add_api_info(data))
-    except Exception as e:
-        return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
-
-@app.route('/api/adsoyad', methods=['GET'])
-def get_adsoyad_info():
-    try:
-        adi = request.args.get('adi', '')
-        soyadi = request.args.get('soyadi', '')
-        il = request.args.get('il', '')
-        ilce = request.args.get('ilce', '')
         
-        response = requests.get(
-            f'https://arastir.vip/api/adsoyad.php?adi={adi}&soyadi={soyadi}&il={il}&ilce={ilce}',
-            headers=get_google_bot_headers(),
-            timeout=10
-        )
         if response.status_code == 200:
             data = response.json() if response.text else {}
+            return jsonify(add_api_info(data))
         else:
-            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
-        return jsonify(add_api_info(data))
+            return jsonify({
+                'success': False,
+                'error': f'API yanıt vermedi (HTTP {response.status_code})',
+                'tc': tc,
+                'api_sahibi': '@rinexdestek',
+                'api_surum': '3.7'
+            }), response.status_code
+            
+    except requests.Timeout:
+        return jsonify({
+            'success': False,
+            'error': 'API zaman aşımına uğradı',
+            'tc': tc,
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 504
     except Exception as e:
-        return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'tc': tc,
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 500
 
-@app.route('/api/adres/<tc>', methods=['GET'])
-def get_adres_info(tc):
+@app.route('/api/adsoyad.php', methods=['GET'])
+@rate_limit()
+def adsoyad_api():
+    """Ad-Soyad ile sorgulama - /api/adsoyad.php?adi=ali&soyadi=yılmaz"""
+    adi = request.args.get('adi', '').strip()
+    soyadi = request.args.get('soyadi', '').strip()
+    il = request.args.get('il', '').strip()
+    ilce = request.args.get('ilce', '').strip()
+    
+    if not adi and not soyadi:
+        return jsonify({
+            'success': False,
+            'message': 'Ad veya soyad parametresi gerekli',
+            'usage': '/api/adsoyad.php?adi=AD&soyadi=SOYAD&il=IL&ilce=ILCE',
+            'example': '/api/adsoyad.php?adi=ali&soyadi=yılmaz&il=istanbul',
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 400
+    
+    try:
+        url = f'https://arastir.vip/api/adsoyad.php?adi={adi}&soyadi={soyadi}&il={il}&ilce={ilce}'
+        response = requests.get(url, headers=get_google_bot_headers(), timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json() if response.text else {}
+            return jsonify(add_api_info(data))
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'API yanıt vermedi (HTTP {response.status_code})',
+                'api_sahibi': '@rinexdestek',
+                'api_surum': '3.7'
+            }), response.status_code
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 500
+
+@app.route('/api/adres.php', methods=['GET'])
+@rate_limit()
+def adres_api():
+    """Adres sorgulama - /api/adres.php?tc=12345678901"""
+    tc = request.args.get('tc', '').strip()
+    
+    if not tc:
+        return jsonify({
+            'success': False,
+            'message': 'TC parametresi gerekli',
+            'usage': '/api/adres.php?tc=TC_NUMARASI',
+            'example': '/api/adres.php?tc=12345678901',
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 400
+    
     try:
         response = requests.get(
             f'https://arastir.vip/api/adres.php?tc={tc}',
             headers=get_google_bot_headers(),
             timeout=10
         )
+        
         if response.status_code == 200:
             data = response.json() if response.text else {}
+            return jsonify(add_api_info(data))
         else:
-            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
-        return jsonify(add_api_info(data))
+            return jsonify({
+                'success': False,
+                'error': f'API yanıt vermedi (HTTP {response.status_code})',
+                'tc': tc,
+                'api_sahibi': '@rinexdestek',
+                'api_surum': '3.7'
+            }), response.status_code
+            
     except Exception as e:
-        return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'tc': tc,
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 500
 
-@app.route('/api/gsmtc/<gsm>', methods=['GET'])
-def get_gsmtc_info(gsm):
+@app.route('/api/gsmtc.php', methods=['GET'])
+@rate_limit()
+def gsmtc_api():
+    """GSM ile TC sorgulama - /api/gsmtc.php?gsm=5551234567"""
+    gsm = request.args.get('gsm', '').strip()
+    
+    if not gsm:
+        return jsonify({
+            'success': False,
+            'message': 'GSM parametresi gerekli',
+            'usage': '/api/gsmtc.php?gsm=GSM_NUMARASI',
+            'example': '/api/gsmtc.php?gsm=5551234567',
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 400
+    
     try:
         response = requests.get(
             f'https://arastir.vip/api/gsmtc.php?gsm={gsm}',
             headers=get_google_bot_headers(),
             timeout=10
         )
+        
         if response.status_code == 200:
             data = response.json() if response.text else {}
+            return jsonify(add_api_info(data))
         else:
-            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
-        return jsonify(add_api_info(data))
+            return jsonify({
+                'success': False,
+                'error': f'API yanıt vermedi (HTTP {response.status_code})',
+                'gsm': gsm,
+                'api_sahibi': '@rinexdestek',
+                'api_surum': '3.7'
+            }), response.status_code
+            
     except Exception as e:
-        return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'gsm': gsm,
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 500
 
-@app.route('/api/tcgsm/<tc>', methods=['GET'])
-def get_tcgsm_info(tc):
+@app.route('/api/tcgsm.php', methods=['GET'])
+@rate_limit()
+def tcgsm_api():
+    """TC ile GSM sorgulama - /api/tcgsm.php?tc=12345678901"""
+    tc = request.args.get('tc', '').strip()
+    
+    if not tc:
+        return jsonify({
+            'success': False,
+            'message': 'TC parametresi gerekli',
+            'usage': '/api/tcgsm.php?tc=TC_NUMARASI',
+            'example': '/api/tcgsm.php?tc=12345678901',
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 400
+    
     try:
         response = requests.get(
             f'https://arastir.vip/api/tcgsm.php?tc={tc}',
             headers=get_google_bot_headers(),
             timeout=10
         )
+        
         if response.status_code == 200:
             data = response.json() if response.text else {}
+            return jsonify(add_api_info(data))
         else:
-            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
-        return jsonify(add_api_info(data))
+            return jsonify({
+                'success': False,
+                'error': f'API yanıt vermedi (HTTP {response.status_code})',
+                'tc': tc,
+                'api_sahibi': '@rinexdestek',
+                'api_surum': '3.7'
+            }), response.status_code
+            
     except Exception as e:
-        return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'tc': tc,
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 500
 
-@app.route('/api/sulale/<tc>', methods=['GET'])
-def get_sulale_info(tc):
+@app.route('/api/sulale.php', methods=['GET'])
+@rate_limit()
+def sulale_api():
+    """Sülale sorgulama - /api/sulale.php?tc=12345678901"""
+    tc = request.args.get('tc', '').strip()
+    
+    if not tc:
+        return jsonify({
+            'success': False,
+            'message': 'TC parametresi gerekli',
+            'usage': '/api/sulale.php?tc=TC_NUMARASI',
+            'example': '/api/sulale.php?tc=12345678901',
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 400
+    
     try:
         response = requests.get(
             f'https://arastir.vip/api/sulale.php?tc={tc}',
             headers=get_google_bot_headers(),
             timeout=10
         )
+        
         if response.status_code == 200:
             data = response.json() if response.text else {}
+            return jsonify(add_api_info(data))
         else:
-            data = {'error': 'API yanıt vermedi', 'status': response.status_code}
-        return jsonify(add_api_info(data))
+            return jsonify({
+                'success': False,
+                'error': f'API yanıt vermedi (HTTP {response.status_code})',
+                'tc': tc,
+                'api_sahibi': '@rinexdestek',
+                'api_surum': '3.7'
+            }), response.status_code
+            
     except Exception as e:
-        return jsonify({'error': 'API hatası', 'detay': str(e), 'api_sahibi': '@rinexdestek', 'api_surum': '3.7'}), 500
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'tc': tc,
+            'api_sahibi': '@rinexdestek',
+            'api_surum': '3.7'
+        }), 500
 
-# Ana sayfa
-@app.route('/', methods=['GET'])
+# ============ ANA SAYFA ============
+@app.route('/')
 def home():
     return jsonify({
         'api_adi': 'rinex API Servisi',
@@ -186,40 +349,46 @@ def home():
         'not': 'BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR',
         'endpoints': [
             {
-                'path': '/api/tc/<tc>',
+                'path': '/api/tc.php',
                 'method': 'GET',
-                'ornek': 'https://api-domain.com/api/tc/12345678901',
-                'aciklama': 'TC kimlik numarası ile kişi bilgilerini getirir'
+                'params': {'tc': 'TC kimlik numarası'},
+                'ornek': '/api/tc.php?tc=12345678901',
+                'aciklama': 'TC ile kişi bilgilerini getirir'
             },
             {
-                'path': '/api/adsoyad?adi=&soyadi=&il=&ilce=',
+                'path': '/api/adsoyad.php',
                 'method': 'GET',
-                'ornek': 'https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz&il=istanbul&ilce=kadıköy',
-                'aciklama': 'Ad, soyad, il ve ilçe bilgileri ile kişi sorgular'
+                'params': {'adi': 'Ad', 'soyadi': 'Soyad', 'il': 'İl', 'ilce': 'İlçe'},
+                'ornek': '/api/adsoyad.php?adi=ali&soyadi=yılmaz&il=istanbul',
+                'aciklama': 'Ad-Soyad ile kişi sorgular'
             },
             {
-                'path': '/api/adres/<tc>',
+                'path': '/api/adres.php',
                 'method': 'GET',
-                'ornek': 'https://api-domain.com/api/adres/12345678901',
-                'aciklama': 'TC kimlik ile adres bilgilerini getirir'
+                'params': {'tc': 'TC kimlik numarası'},
+                'ornek': '/api/adres.php?tc=12345678901',
+                'aciklama': 'TC ile adres bilgilerini getirir'
             },
             {
-                'path': '/api/gsmtc/<gsm>',
+                'path': '/api/gsmtc.php',
                 'method': 'GET',
-                'ornek': 'https://api-domain.com/api/gsmtc/5551234567',
-                'aciklama': 'GSM numarası ile TC kimlik sorgular'
+                'params': {'gsm': 'GSM numarası'},
+                'ornek': '/api/gsmtc.php?gsm=5551234567',
+                'aciklama': 'GSM ile TC kimlik sorgular'
             },
             {
-                'path': '/api/tcgsm/<tc>',
+                'path': '/api/tcgsm.php',
                 'method': 'GET',
-                'ornek': 'https://api-domain.com/api/tcgsm/12345678901',
-                'aciklama': 'TC kimlik ile GSM numarası sorgular'
+                'params': {'tc': 'TC kimlik numarası'},
+                'ornek': '/api/tcgsm.php?tc=12345678901',
+                'aciklama': 'TC ile GSM numarası sorgular'
             },
             {
-                'path': '/api/sulale/<tc>',
+                'path': '/api/sulale.php',
                 'method': 'GET',
-                'ornek': 'https://api-domain.com/api/sulale/12345678901',
-                'aciklama': 'TC kimlik ile sülale/akraba bilgilerini getirir'
+                'params': {'tc': 'TC kimlik numarası'},
+                'ornek': '/api/sulale.php?tc=12345678901',
+                'aciklama': 'TC ile sülale bilgilerini getirir'
             }
         ],
         'ornek_kullanim': {
@@ -227,29 +396,23 @@ def home():
 import requests
 
 # TC sorgulama
-response = requests.get('https://api-domain.com/api/tc/12345678901')
+response = requests.get('https://api-domain.com/api/tc.php?tc=12345678901')
 print(response.json())
 
-# Ad-Soyad sorgulama
-response = requests.get('https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz')
+# GSM sorgulama
+response = requests.get('https://api-domain.com/api/gsmtc.php?gsm=5551234567')
 print(response.json())
             """,
             'javascript': """
 // TC sorgulama
-fetch('https://api-domain.com/api/tc/12345678901')
-  .then(response => response.json())
-  .then(data => console.log(data));
-
-// Ad-Soyad sorgulama
-fetch('https://api-domain.com/api/adsoyad?adi=ali&soyadi=yılmaz')
+fetch('https://api-domain.com/api/tc.php?tc=12345678901')
   .then(response => response.json())
   .then(data => console.log(data));
             """
         }
     })
 
-# Health check
-@app.route('/health', methods=['GET'])
+@app.route('/health')
 def health():
     return jsonify({'status': 'ok', 'api_sahibi': '@rinexdestek'})
 
@@ -261,6 +424,10 @@ if __name__ == '__main__':
     print("📦 API Sürüm: 3.7")
     print("⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR")
     print("=" * 50)
-    print("📌 Python Sürümü:", sys.version)
     print(f"🌐 Sunucu http://0.0.0.0:{port} adresinde çalışıyor...")
+    print("\n📌 Kullanım Örnekleri:")
+    print(f"  TC sorgula: http://localhost:{port}/api/tc.php?tc=12345678901")
+    print(f"  GSM sorgula: http://localhost:{port}/api/gsmtc.php?gsm=5551234567")
+    print(f"  Adres sorgula: http://localhost:{port}/api/adres.php?tc=12345678901")
+    print("=" * 50)
     app.run(host='0.0.0.0', port=port, debug=False)

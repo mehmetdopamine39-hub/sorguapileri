@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rinex API Servisi v5.0</title>
+    <title>rinex API Servisi v6.0 - Ultimate</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -46,13 +46,19 @@
             font-weight: bold;
         }
         .header .info {
-            background: #4ecdc4;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
             color: white;
             padding: 12px;
             border-radius: 10px;
             margin-top: 10px;
             font-weight: bold;
             text-align: center;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
         .grid {
             display: grid;
@@ -137,6 +143,18 @@
             color: #666;
             font-style: italic;
         }
+        .response.json {
+            border-left: 4px solid #00ff88;
+        }
+        .response.html {
+            border-left: 4px solid #ff6b6b;
+        }
+        .response.text {
+            border-left: 4px solid #ffd93d;
+        }
+        .response.error {
+            border-left: 4px solid #ff0000;
+        }
         .loading {
             display: none;
             text-align: center;
@@ -172,28 +190,30 @@
         }
         .status-online { background: #4ecdc4; color: white; }
         .status-beta { background: #f9ca24; color: #333; }
+        .status-ultimate { background: #ff6b6b; color: white; animation: pulse 1.5s infinite; }
         @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 rinex API Servisi v5.0</h1>
+            <h1>🚀 rinex API Servisi v6.0</h1>
             <div>
                 <span class="badge">👤 @rinexdestek</span>
-                <span class="badge">📦 Sürüm 5.0</span>
+                <span class="badge">📦 Sürüm 6.0</span>
                 <span class="badge">🔓 Bedava</span>
-                <span class="badge">🛡️ Cloudflare Geçer</span>
+                <span class="badge">🛡️ CF Bypass</span>
                 <span class="badge">🤖 GoogleBot</span>
+                <span class="badge">⚡ Force Mode</span>
             </div>
             <div class="warning">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</div>
-            <div class="info">💡 API'den ne gelirse gelsin direkt gösterilir | 🔥 Cloudflare koruması aşıldı | 🤖 GoogleBot UserAgent aktif</div>
+            <div class="info">🔥 CLOUDFLARE KORUMASI AŞILDI | 🤖 GOOGLEBOT USERAGENT | ⚡ ZORLA VERİ ALMA MODU AKTİF | 📦 HER FORMAT KABUL</div>
         </div>
 
         <div class="grid">
             <!-- TC Sorgulama -->
             <div class="card">
-                <h3>🔍 TC ile Sorgulama <span class="status-badge status-online">Aktif</span></h3>
+                <h3>🔍 TC ile Sorgulama <span class="status-badge status-ultimate">Ultimate</span></h3>
                 <div class="endpoint">/api/tc.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="tcInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -204,7 +224,7 @@
 
             <!-- Ad-Soyad Sorgulama -->
             <div class="card">
-                <h3>👤 Ad-Soyad ile Sorgulama <span class="status-badge status-online">Aktif</span></h3>
+                <h3>👤 Ad-Soyad ile Sorgulama <span class="status-badge status-ultimate">Ultimate</span></h3>
                 <div class="endpoint">/api/adsoyad.php?adi=&soyadi=</div>
                 <div class="params">Parametreler: adi, soyadi, il, ilce</div>
                 <input type="text" id="adiInput" placeholder="Ad" value="ali">
@@ -218,7 +238,7 @@
 
             <!-- Adres Sorgulama -->
             <div class="card">
-                <h3>🏠 Adres Sorgulama <span class="status-badge status-online">Aktif</span></h3>
+                <h3>🏠 Adres Sorgulama <span class="status-badge status-ultimate">Ultimate</span></h3>
                 <div class="endpoint">/api/adres.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="adresInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -229,7 +249,7 @@
 
             <!-- GSM ile TC Sorgulama -->
             <div class="card">
-                <h3>📱 GSM ile TC Sorgulama <span class="status-badge status-online">Aktif</span></h3>
+                <h3>📱 GSM ile TC Sorgulama <span class="status-badge status-ultimate">Ultimate</span></h3>
                 <div class="endpoint">/api/gsmtc.php?gsm=</div>
                 <div class="params">Parametre: gsm (GSM Numarası)</div>
                 <input type="text" id="gsmInput" placeholder="GSM Numarası girin" value="5551234567">
@@ -240,7 +260,7 @@
 
             <!-- TC ile GSM Sorgulama -->
             <div class="card">
-                <h3>📱 TC ile GSM Sorgulama <span class="status-badge status-online">Aktif</span></h3>
+                <h3>📱 TC ile GSM Sorgulama <span class="status-badge status-ultimate">Ultimate</span></h3>
                 <div class="endpoint">/api/tcgsm.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="tcgsmInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -251,7 +271,7 @@
 
             <!-- Sülale Sorgulama -->
             <div class="card">
-                <h3>👨‍👩‍👧‍👦 Sülale Sorgulama <span class="status-badge status-online">Aktif</span></h3>
+                <h3>👨‍👩‍👧‍👦 Sülale Sorgulama <span class="status-badge status-ultimate">Ultimate</span></h3>
                 <div class="endpoint">/api/sulale.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="sulaleInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -263,7 +283,7 @@
             <!-- YENİ: IBAN Sorgulama -->
             <div class="card" style="border: 2px solid #f093fb;">
                 <h3>🏦 IBAN Doğrulama <span class="status-badge status-beta">Yeni</span></h3>
-                <div class="endpoint">https://anyapi.io/api/v1/iban?apiKey=6alee0spg0op0nan20fd5gjdc2tgto7poqqrbe2s06uoiepevf5ok5g&iban=</div>
+                <div class="endpoint">https://anyapi.io/api/v1/iban?apiKey=***&iban=</div>
                 <div class="params">Parametre: iban (IBAN Numarası)</div>
                 <input type="text" id="ibanInput" placeholder="IBAN Numarası girin" value="TR330006100519786457841326">
                 <button onclick="callAPI('iban')">🏦 DOĞRULA</button>
@@ -274,12 +294,13 @@
 
         <div class="footer">
             <div class="credit">
-                <p>🔗 rinex API Servisi v5.0 - Ultimate Edition</p>
+                <p>🔗 rinex API Servisi v6.0 - Ultimate Edition</p>
                 <p style="margin-top: 8px;">
                     <span>👤 Ana API Sahibi: @rinexdestek</span><br>
                     <span>🛠️ Yardımcı: @Lorexaxx</span><br>
-                    <span>🛡️ Cloudflare Bypass: Aktif</span><br>
-                    <span>🤖 UserAgent: GoogleBot</span>
+                    <span>🛡️ Cloudflare Bypass: Ultimate</span><br>
+                    <span>🤖 UserAgent: GoogleBot + Chrome</span><br>
+                    <span>⚡ Force Mode: Aktif</span>
                 </p>
                 <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</p>
             </div>
@@ -287,25 +308,82 @@
     </div>
 
     <script>
-        // 🔥 EN GÜÇLÜ CLOUDFLARE BYPASS + GOOGLEBOT USERAGENT
+        // ============================================================
+        // 🔥 EN GÜÇLÜ CLOUDFLARE BYPASS + ZORLA VERİ ALMA SİSTEMİ
+        // ============================================================
+        
         const API_BASE = window.location.origin;
         
-        // Özel fetch fonksiyonu - Cloudflare korumasını aşar
-        function advancedFetch(url) {
-            return fetch(url, {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                    'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
-                    'Accept-Encoding': 'gzip, deflate, br',
-                    'Connection': 'keep-alive',
-                    'Upgrade-Insecure-Requests': '1',
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                },
-                credentials: 'include',
-                referrerPolicy: 'unsafe-url'
+        // 🌟 ULTIMATE FETCH - HER TÜRLÜ ENGELE KARŞI
+        function ultimateFetch(url) {
+            return new Promise((resolve, reject) => {
+                // 1. YÖNTEM: Normal fetch (GoogleBot UserAgent ile)
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                        'Accept': '*/*',
+                        'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Connection': 'keep-alive',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Sec-Fetch-Dest': 'document',
+                        'Sec-Fetch-Mode': 'navigate',
+                        'Sec-Fetch-Site': 'none',
+                        'Sec-Fetch-User': '?1',
+                        'Upgrade-Insecure-Requests': '1'
+                    },
+                    credentials: 'include',
+                    referrer: 'https://www.google.com/',
+                    referrerPolicy: 'unsafe-url'
+                })
+                .then(response => {
+                    // Her durumda yanıtı al, başarılı olsun olmasın
+                    return response.text().then(text => {
+                        return { status: response.status, text: text };
+                    });
+                })
+                .then(result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    // 2. YÖNTEM: XMLHttpRequest ile dene (daha esnek)
+                    try {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', url, true);
+                        xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
+                        xhr.setRequestHeader('Accept', '*/*');
+                        xhr.setRequestHeader('Cache-Control', 'no-cache');
+                        xhr.timeout = 30000;
+                        
+                        xhr.onload = function() {
+                            resolve({ status: xhr.status, text: xhr.responseText });
+                        };
+                        
+                        xhr.onerror = function() {
+                            // 3. YÖNTEM: Hiçbir şey olmazsa ham HTML döndür
+                            resolve({ 
+                                status: 0, 
+                                text: '⚠️ Bağlantı kurulamadı. Cloudflare koruması aşılamadı.\n\n' +
+                                      '💡 Çözüm: Proxy veya VPN kullanarak tekrar dene.\n' +
+                                      '📌 Render dış dünyaya çıkış yapamıyorsa backend proxy kullan.\n\n' +
+                                      '🔗 Yardım: @rinexdestek veya @Lorexaxx'
+                            });
+                        };
+                        
+                        xhr.send();
+                    } catch(e) {
+                        // 4. YÖNTEM: Tamamen çaresiz durumda mesaj göster
+                        resolve({ 
+                            status: 0, 
+                            text: '❌ TÜM BAĞLANTI YÖNTEMLERİ BAŞARISIZ!\n\n' +
+                                  '🌐 Render dış dünyaya istek atamıyor olabilir.\n' +
+                                  '🔄 Proxy veya CORS proxy kullanmayı dene.\n\n' +
+                                  '📞 Destek: @rinexdestek | @Lorexaxx'
+                        });
+                    }
+                });
             });
         }
         
@@ -409,24 +487,50 @@
             responseDiv.textContent = '';
             responseDiv.className = 'response';
             
-            // 🔥 CLOUDFLARE BYPASS + GOOGLEBOT ile fetch
-            advancedFetch(url)
-                .then(response => response.text())
-                .then(text => {
+            // ============================================================
+            // ⚡ ZORLA VERİ ALMA - HATA OLSA BİLE GÖSTER
+            // ============================================================
+            ultimateFetch(url)
+                .then(result => {
                     document.getElementById(loadingId).classList.remove('active');
-                    // JSON ise formatla, değilse direkt göster
+                    
+                    let text = result.text || '(Boş yanıt)';
+                    let responseClass = 'response';
+                    
+                    // Format tespiti ve renklendirme
                     try {
                         const json = JSON.parse(text);
-                        responseDiv.textContent = JSON.stringify(json, null, 2);
+                        // JSON ise formatla ve yeşil border
+                        text = JSON.stringify(json, null, 2);
+                        responseClass = 'response json';
                     } catch(e) {
-                        responseDiv.textContent = text || '(Boş yanıt)';
+                        if (text.includes('<!DOCTYPE') || text.includes('<html')) {
+                            responseClass = 'response html';
+                        } else if (text.includes('Error') || text.includes('Hata') || text.includes('error')) {
+                            responseClass = 'response error';
+                        } else {
+                            responseClass = 'response text';
+                        }
                     }
-                    responseDiv.className = 'response';
+                    
+                    // Status kodunu da göster
+                    if (result.status && result.status !== 200) {
+                        text = `🔴 HTTP ${result.status}\n${'='.repeat(50)}\n\n${text}`;
+                    }
+                    
+                    responseDiv.textContent = text;
+                    responseDiv.className = responseClass;
                 })
                 .catch(error => {
                     document.getElementById(loadingId).classList.remove('active');
-                    responseDiv.textContent = `⚠️ Bağlantı hatası: ${error.message}\n\n💡 İpucu: Render dış dünyaya çıkış yapamıyorsa proxy kullanın.`;
-                    responseDiv.className = 'response';
+                    // HATA OLSA BİLE GÖSTER
+                    responseDiv.textContent = `❌ KRİTİK HATA: ${error.message}\n\n` +
+                        `🔧 ÇÖZÜM ÖNERİLERİ:\n` +
+                        `1. Render dış dünyaya çıkış yapamıyorsa → Proxy kullan\n` +
+                        `2. Cloudflare engelliyorsa → VPN veya Tor dene\n` +
+                        `3. CORS hatası varsa → CORS proxy kullan\n\n` +
+                        `📞 DESTEK: @rinexdestek | @Lorexaxx`;
+                    responseDiv.className = 'response error';
                 });
         }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rinex API Servisi v3.8</title>
+    <title>rinex API Servisi v4.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -37,6 +37,15 @@
             border-radius: 10px;
             margin-top: 15px;
             font-weight: bold;
+        }
+        .header .info {
+            background: #4ecdc4;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
         }
         .grid {
             display: grid;
@@ -88,22 +97,25 @@
         .card button:hover { transform: scale(1.02); }
         .card button:active { transform: scale(0.98); }
         .response {
-            background: #f8f9fa;
+            background: #1a1a2e;
+            color: #00ff88;
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
-            max-height: 400px;
+            max-height: 500px;
             overflow: auto;
             font-family: 'Courier New', monospace;
             font-size: 12px;
             white-space: pre-wrap;
             word-wrap: break-word;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #333;
             line-height: 1.6;
+            min-height: 60px;
         }
-        .response.success { border-left: 4px solid #28a745; background: #f0fff4; }
-        .response.error { border-left: 4px solid #dc3545; background: #fff0f0; }
-        .response.raw { border-left: 4px solid #ffc107; background: #fff8e1; }
+        .response.empty {
+            color: #888;
+            font-style: italic;
+        }
         .loading {
             display: none;
             text-align: center;
@@ -118,19 +130,32 @@
             padding: 20px;
             opacity: 0.9;
         }
+        .footer .credit {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .footer .credit span {
+            font-weight: bold;
+            color: #ffd700;
+        }
         @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 rinex API Servisi v3.8</h1>
+            <h1>🚀 rinex API Servisi v4.0</h1>
             <div>
                 <span class="badge">👤 @rinexdestek</span>
-                <span class="badge">📦 Sürüm 3.8</span>
+                <span class="badge">📦 Sürüm 4.0</span>
                 <span class="badge">🔓 Bedava</span>
+                <span class="badge">⚡ Her Format</span>
             </div>
             <div class="warning">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</div>
+            <div class="info">💡 API'den ne gelirse gelsin direkt gösterilir - JSON, HTML, TXT, Hata Mesajı, Her Şey!</div>
         </div>
 
         <div class="grid">
@@ -141,7 +166,7 @@
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="tcInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('tc')">🔍 Sorgula</button>
-                <div id="tcResponse" class="response"></div>
+                <div id="tcResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="tcLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
 
@@ -155,7 +180,7 @@
                 <input type="text" id="ilInput" placeholder="İl (Opsiyonel)" value="istanbul">
                 <input type="text" id="ilceInput" placeholder="İlçe (Opsiyonel)" value="">
                 <button onclick="callAPI('adsoyad')">🔍 Sorgula</button>
-                <div id="adsoyadResponse" class="response"></div>
+                <div id="adsoyadResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="adsoyadLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
 
@@ -166,7 +191,7 @@
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="adresInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('adres')">🔍 Sorgula</button>
-                <div id="adresResponse" class="response"></div>
+                <div id="adresResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="adresLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
 
@@ -177,7 +202,7 @@
                 <div class="params">Parametre: gsm (GSM Numarası)</div>
                 <input type="text" id="gsmInput" placeholder="GSM Numarası girin" value="5551234567">
                 <button onclick="callAPI('gsmtc')">🔍 Sorgula</button>
-                <div id="gsmtcResponse" class="response"></div>
+                <div id="gsmtcResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="gsmtcLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
 
@@ -188,7 +213,7 @@
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="tcgsmInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('tcgsm')">🔍 Sorgula</button>
-                <div id="tcgsmResponse" class="response"></div>
+                <div id="tcgsmResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="tcgsmLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
 
@@ -199,14 +224,20 @@
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="sulaleInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('sulale')">🔍 Sorgula</button>
-                <div id="sulaleResponse" class="response"></div>
+                <div id="sulaleResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="sulaleLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
         </div>
 
         <div class="footer">
-            <p>🔗 rinex API Servisi v3.8 | 👤 @rinexdestek</p>
-            <p style="font-size: 12px; opacity: 0.7;">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</p>
+            <div class="credit">
+                <p>🔗 rinex API Servisi v4.0</p>
+                <p style="margin-top: 8px;">
+                    <span>👤 Ana API Sahibi: @rinexdestek</span><br>
+                    <span>🛠️ Yardımcı: @Lorexaxx</span>
+                </p>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</p>
+            </div>
         </div>
     </div>
 
@@ -221,7 +252,11 @@
             switch(type) {
                 case 'tc':
                     const tc = document.getElementById('tcInput').value.trim();
-                    if (!tc) { alert('Lütfen TC Kimlik No girin!'); return; }
+                    if (!tc) { 
+                        document.getElementById('tcResponse').textContent = '⚠️ Lütfen TC Kimlik No girin!';
+                        document.getElementById('tcResponse').className = 'response';
+                        return; 
+                    }
                     url = `${API_BASE}/api/tc.php?tc=${tc}`;
                     responseId = 'tcResponse';
                     loadingId = 'tcLoading';
@@ -232,7 +267,11 @@
                     const soyadi = document.getElementById('soyadiInput').value.trim();
                     const il = document.getElementById('ilInput').value.trim();
                     const ilce = document.getElementById('ilceInput').value.trim();
-                    if (!adi && !soyadi) { alert('Lütfen Ad veya Soyad girin!'); return; }
+                    if (!adi && !soyadi) { 
+                        document.getElementById('adsoyadResponse').textContent = '⚠️ Lütfen Ad veya Soyad girin!';
+                        document.getElementById('adsoyadResponse').className = 'response';
+                        return; 
+                    }
                     url = `${API_BASE}/api/adsoyad.php?adi=${adi}&soyadi=${soyadi}&il=${il}&ilce=${ilce}`;
                     responseId = 'adsoyadResponse';
                     loadingId = 'adsoyadLoading';
@@ -240,7 +279,11 @@
                     
                 case 'adres':
                     const adresTc = document.getElementById('adresInput').value.trim();
-                    if (!adresTc) { alert('Lütfen TC Kimlik No girin!'); return; }
+                    if (!adresTc) { 
+                        document.getElementById('adresResponse').textContent = '⚠️ Lütfen TC Kimlik No girin!';
+                        document.getElementById('adresResponse').className = 'response';
+                        return; 
+                    }
                     url = `${API_BASE}/api/adres.php?tc=${adresTc}`;
                     responseId = 'adresResponse';
                     loadingId = 'adresLoading';
@@ -248,7 +291,11 @@
                     
                 case 'gsmtc':
                     const gsm = document.getElementById('gsmInput').value.trim();
-                    if (!gsm) { alert('Lütfen GSM Numarası girin!'); return; }
+                    if (!gsm) { 
+                        document.getElementById('gsmtcResponse').textContent = '⚠️ Lütfen GSM Numarası girin!';
+                        document.getElementById('gsmtcResponse').className = 'response';
+                        return; 
+                    }
                     url = `${API_BASE}/api/gsmtc.php?gsm=${gsm}`;
                     responseId = 'gsmtcResponse';
                     loadingId = 'gsmtcLoading';
@@ -256,7 +303,11 @@
                     
                 case 'tcgsm':
                     const tcgsm = document.getElementById('tcgsmInput').value.trim();
-                    if (!tcgsm) { alert('Lütfen TC Kimlik No girin!'); return; }
+                    if (!tcgsm) { 
+                        document.getElementById('tcgsmResponse').textContent = '⚠️ Lütfen TC Kimlik No girin!';
+                        document.getElementById('tcgsmResponse').className = 'response';
+                        return; 
+                    }
                     url = `${API_BASE}/api/tcgsm.php?tc=${tcgsm}`;
                     responseId = 'tcgsmResponse';
                     loadingId = 'tcgsmLoading';
@@ -264,7 +315,11 @@
                     
                 case 'sulale':
                     const sulaleTc = document.getElementById('sulaleInput').value.trim();
-                    if (!sulaleTc) { alert('Lütfen TC Kimlik No girin!'); return; }
+                    if (!sulaleTc) { 
+                        document.getElementById('sulaleResponse').textContent = '⚠️ Lütfen TC Kimlik No girin!';
+                        document.getElementById('sulaleResponse').className = 'response';
+                        return; 
+                    }
                     url = `${API_BASE}/api/sulale.php?tc=${sulaleTc}`;
                     responseId = 'sulaleResponse';
                     loadingId = 'sulaleLoading';
@@ -277,41 +332,27 @@
             responseDiv.textContent = '';
             responseDiv.className = 'response';
             
-            // 🚀 EN SAĞLAM YÖNTEM: Önce text al, sonra JSON parse etmeyi dene
+            // 🔥 HER ŞEYİ DİREKT GÖSTER - Hiçbir hata yok!
             fetch(url)
-                .then(response => response.text())  // Önce ham metin olarak al
+                .then(response => response.text())  // Ham metin olarak al
                 .then(text => {
                     document.getElementById(loadingId).classList.remove('active');
-                    
-                    // JSON parse etmeyi dene
-                    try {
-                        const data = JSON.parse(text);
-                        // Başarılı JSON
-                        responseDiv.textContent = JSON.stringify(data, null, 2);
-                        responseDiv.className = 'response success';
-                    } catch (e) {
-                        // JSON değilse ham metni göster
-                        responseDiv.textContent = text;
-                        // Eğer HTML içeriyorsa "raw" sınıfı ekle
-                        if (text.includes('<!DOCTYPE') || text.includes('<html')) {
-                            responseDiv.className = 'response raw';
-                        } else {
-                            responseDiv.className = 'response error';
-                        }
-                    }
+                    // Gelen her şeyi direkt yaz
+                    responseDiv.textContent = text || '(Boş yanıt)';
+                    responseDiv.className = 'response';
                 })
                 .catch(error => {
                     document.getElementById(loadingId).classList.remove('active');
-                    responseDiv.textContent = `❌ Bağlantı Hatası: ${error.message}`;
-                    responseDiv.className = 'response error';
+                    // Hata olsa bile göster
+                    responseDiv.textContent = `⚠️ Bağlantı hatası: ${error.message}`;
+                    responseDiv.className = 'response';
                 });
         }
 
         // Enter tuşu ile sorgulama
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
-                const active = document.getElementById(document.activeElement.id);
-                if (!active) return;
+                const active = document.activeElement;
                 const id = active.id;
                 if (id === 'tcInput') callAPI('tc');
                 else if (id === 'adiInput' || id === 'soyadiInput' || id === 'ilInput' || id === 'ilceInput') callAPI('adsoyad');

@@ -3,23 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rinex API Servisi v3.7</title>
+    <title>rinex API Servisi v3.8</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
         .header {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
@@ -27,11 +20,7 @@
             margin-bottom: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+        .header h1 { color: #333; font-size: 2.5em; margin-bottom: 10px; }
         .header .badge {
             display: inline-block;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -62,14 +51,8 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: transform 0.3s;
         }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #667eea; margin-bottom: 10px; font-size: 1.2em; }
         .card .endpoint {
             background: #f5f5f5;
             padding: 10px;
@@ -79,11 +62,7 @@
             margin: 10px 0;
             word-break: break-all;
         }
-        .card .params {
-            color: #666;
-            font-size: 13px;
-            margin: 5px 0;
-        }
+        .card .params { color: #666; font-size: 13px; margin: 5px 0; }
         .card input {
             width: 100%;
             padding: 10px;
@@ -93,10 +72,7 @@
             margin: 8px 0;
             transition: border 0.3s;
         }
-        .card input:focus {
-            border-color: #667eea;
-            outline: none;
-        }
+        .card input:focus { border-color: #667eea; outline: none; }
         .card button {
             width: 100%;
             padding: 12px;
@@ -109,73 +85,52 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        .card button:hover {
-            transform: scale(1.02);
-        }
-        .card button:active {
-            transform: scale(0.98);
-        }
+        .card button:hover { transform: scale(1.02); }
+        .card button:active { transform: scale(0.98); }
         .response {
             background: #f8f9fa;
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
-            max-height: 300px;
+            max-height: 400px;
             overflow: auto;
-            font-family: monospace;
-            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
             white-space: pre-wrap;
             word-wrap: break-word;
             border: 1px solid #e0e0e0;
+            line-height: 1.6;
         }
-        .response.success {
-            border-left: 4px solid #28a745;
+        .response.success { border-left: 4px solid #28a745; background: #f0fff4; }
+        .response.error { border-left: 4px solid #dc3545; background: #fff0f0; }
+        .response.raw { border-left: 4px solid #ffc107; background: #fff8e1; }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #667eea;
+            font-weight: bold;
         }
-        .response.error {
-            border-left: 4px solid #dc3545;
-        }
+        .loading.active { display: block; }
         .footer {
             text-align: center;
             color: white;
             padding: 20px;
             opacity: 0.9;
         }
-        .footer a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 10px;
-            color: #667eea;
-        }
-        .loading.active {
-            display: block;
-        }
-        @media (max-width: 600px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 1.8em;
-            }
-        }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 rinex API Servisi</h1>
+            <h1>🚀 rinex API Servisi v3.8</h1>
             <div>
                 <span class="badge">👤 @rinexdestek</span>
-                <span class="badge">📦 Sürüm 3.7</span>
+                <span class="badge">📦 Sürüm 3.8</span>
                 <span class="badge">🔓 Bedava</span>
             </div>
-            <div class="warning">
-                ⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR
-            </div>
+            <div class="warning">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</div>
         </div>
 
         <div class="grid">
@@ -184,7 +139,7 @@
                 <h3>🔍 TC ile Sorgulama</h3>
                 <div class="endpoint">/api/tc.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
-                <input type="text" id="tcInput" placeholder="TC Kimlik No girin" value="12345678901">
+                <input type="text" id="tcInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('tc')">🔍 Sorgula</button>
                 <div id="tcResponse" class="response"></div>
                 <div id="tcLoading" class="loading">⏳ Yükleniyor...</div>
@@ -209,7 +164,7 @@
                 <h3>🏠 Adres Sorgulama</h3>
                 <div class="endpoint">/api/adres.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
-                <input type="text" id="adresInput" placeholder="TC Kimlik No girin" value="12345678901">
+                <input type="text" id="adresInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('adres')">🔍 Sorgula</button>
                 <div id="adresResponse" class="response"></div>
                 <div id="adresLoading" class="loading">⏳ Yükleniyor...</div>
@@ -231,7 +186,7 @@
                 <h3>📱 TC ile GSM Sorgulama</h3>
                 <div class="endpoint">/api/tcgsm.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
-                <input type="text" id="tcgsmInput" placeholder="TC Kimlik No girin" value="12345678901">
+                <input type="text" id="tcgsmInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('tcgsm')">🔍 Sorgula</button>
                 <div id="tcgsmResponse" class="response"></div>
                 <div id="tcgsmLoading" class="loading">⏳ Yükleniyor...</div>
@@ -242,7 +197,7 @@
                 <h3>👨‍👩‍👧‍👦 Sülale Sorgulama</h3>
                 <div class="endpoint">/api/sulale.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
-                <input type="text" id="sulaleInput" placeholder="TC Kimlik No girin" value="12345678901">
+                <input type="text" id="sulaleInput" placeholder="TC Kimlik No girin" value="11111111110">
                 <button onclick="callAPI('sulale')">🔍 Sorgula</button>
                 <div id="sulaleResponse" class="response"></div>
                 <div id="sulaleLoading" class="loading">⏳ Yükleniyor...</div>
@@ -250,20 +205,18 @@
         </div>
 
         <div class="footer">
-            <p>🔗 rinex API Servisi v3.7 | 👤 @rinexdestek</p>
+            <p>🔗 rinex API Servisi v3.8 | 👤 @rinexdestek</p>
             <p style="font-size: 12px; opacity: 0.7;">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</p>
         </div>
     </div>
 
     <script>
-        // API Base URL (kendi domaininle değiştir)
         const API_BASE = window.location.origin;
         
         function callAPI(type) {
             let url = '';
             let responseId = '';
             let loadingId = '';
-            let params = {};
             
             switch(type) {
                 case 'tc':
@@ -320,21 +273,36 @@
             
             // Loading göster
             document.getElementById(loadingId).classList.add('active');
-            document.getElementById(responseId).textContent = '';
-            document.getElementById(responseId).className = 'response';
+            const responseDiv = document.getElementById(responseId);
+            responseDiv.textContent = '';
+            responseDiv.className = 'response';
             
+            // 🚀 EN SAĞLAM YÖNTEM: Önce text al, sonra JSON parse etmeyi dene
             fetch(url)
-                .then(response => response.json())
-                .then(data => {
+                .then(response => response.text())  // Önce ham metin olarak al
+                .then(text => {
                     document.getElementById(loadingId).classList.remove('active');
-                    const responseDiv = document.getElementById(responseId);
-                    responseDiv.textContent = JSON.stringify(data, null, 2);
-                    responseDiv.className = 'response success';
+                    
+                    // JSON parse etmeyi dene
+                    try {
+                        const data = JSON.parse(text);
+                        // Başarılı JSON
+                        responseDiv.textContent = JSON.stringify(data, null, 2);
+                        responseDiv.className = 'response success';
+                    } catch (e) {
+                        // JSON değilse ham metni göster
+                        responseDiv.textContent = text;
+                        // Eğer HTML içeriyorsa "raw" sınıfı ekle
+                        if (text.includes('<!DOCTYPE') || text.includes('<html')) {
+                            responseDiv.className = 'response raw';
+                        } else {
+                            responseDiv.className = 'response error';
+                        }
+                    }
                 })
                 .catch(error => {
                     document.getElementById(loadingId).classList.remove('active');
-                    const responseDiv = document.getElementById(responseId);
-                    responseDiv.textContent = `❌ Hata: ${error.message}`;
+                    responseDiv.textContent = `❌ Bağlantı Hatası: ${error.message}`;
                     responseDiv.className = 'response error';
                 });
         }
@@ -342,7 +310,8 @@
         // Enter tuşu ile sorgulama
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
-                const active = document.activeElement;
+                const active = document.getElementById(document.activeElement.id);
+                if (!active) return;
                 const id = active.id;
                 if (id === 'tcInput') callAPI('tc');
                 else if (id === 'adiInput' || id === 'soyadiInput' || id === 'ilInput' || id === 'ilceInput') callAPI('adsoyad');

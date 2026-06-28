@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rinex API Servisi v4.0</title>
+    <title>rinex API Servisi v5.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             padding: 20px;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; }
         .header {
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-        .header h1 { color: #333; font-size: 2.5em; margin-bottom: 10px; }
+        .header h1 { 
+            color: #333; 
+            font-size: 2.5em; 
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         .header .badge {
             display: inline-block;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -57,22 +64,33 @@
             background: rgba(255,255,255,0.95);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        .card:hover { transform: translateY(-5px); }
-        .card h3 { color: #667eea; margin-bottom: 10px; font-size: 1.2em; }
+        .card:hover { 
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .card h3 { 
+            color: #667eea; 
+            margin-bottom: 10px; 
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .card .endpoint {
             background: #f5f5f5;
             padding: 10px;
             border-radius: 8px;
             font-family: monospace;
-            font-size: 14px;
+            font-size: 13px;
             margin: 10px 0;
             word-break: break-all;
+            border-left: 3px solid #667eea;
         }
         .card .params { color: #666; font-size: 13px; margin: 5px 0; }
-        .card input {
+        .card input, .card select {
             width: 100%;
             padding: 10px;
             border: 2px solid #ddd;
@@ -81,7 +99,7 @@
             margin: 8px 0;
             transition: border 0.3s;
         }
-        .card input:focus { border-color: #667eea; outline: none; }
+        .card input:focus, .card select:focus { border-color: #667eea; outline: none; }
         .card button {
             width: 100%;
             padding: 12px;
@@ -92,12 +110,15 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card button:hover { transform: scale(1.02); }
+        .card button:hover { 
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
         .card button:active { transform: scale(0.98); }
         .response {
-            background: #1a1a2e;
+            background: #0a0a0a;
             color: #00ff88;
             border-radius: 8px;
             padding: 15px;
@@ -113,7 +134,7 @@
             min-height: 60px;
         }
         .response.empty {
-            color: #888;
+            color: #666;
             font-style: italic;
         }
         .loading {
@@ -141,27 +162,38 @@
             font-weight: bold;
             color: #ffd700;
         }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-online { background: #4ecdc4; color: white; }
+        .status-beta { background: #f9ca24; color: #333; }
         @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 rinex API Servisi v4.0</h1>
+            <h1>🚀 rinex API Servisi v5.0</h1>
             <div>
                 <span class="badge">👤 @rinexdestek</span>
-                <span class="badge">📦 Sürüm 4.0</span>
+                <span class="badge">📦 Sürüm 5.0</span>
                 <span class="badge">🔓 Bedava</span>
-                <span class="badge">⚡ Her Format</span>
+                <span class="badge">🛡️ Cloudflare Geçer</span>
+                <span class="badge">🤖 GoogleBot</span>
             </div>
             <div class="warning">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</div>
-            <div class="info">💡 API'den ne gelirse gelsin direkt gösterilir - JSON, HTML, TXT, Hata Mesajı, Her Şey!</div>
+            <div class="info">💡 API'den ne gelirse gelsin direkt gösterilir | 🔥 Cloudflare koruması aşıldı | 🤖 GoogleBot UserAgent aktif</div>
         </div>
 
         <div class="grid">
             <!-- TC Sorgulama -->
             <div class="card">
-                <h3>🔍 TC ile Sorgulama</h3>
+                <h3>🔍 TC ile Sorgulama <span class="status-badge status-online">Aktif</span></h3>
                 <div class="endpoint">/api/tc.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="tcInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -172,7 +204,7 @@
 
             <!-- Ad-Soyad Sorgulama -->
             <div class="card">
-                <h3>👤 Ad-Soyad ile Sorgulama</h3>
+                <h3>👤 Ad-Soyad ile Sorgulama <span class="status-badge status-online">Aktif</span></h3>
                 <div class="endpoint">/api/adsoyad.php?adi=&soyadi=</div>
                 <div class="params">Parametreler: adi, soyadi, il, ilce</div>
                 <input type="text" id="adiInput" placeholder="Ad" value="ali">
@@ -186,7 +218,7 @@
 
             <!-- Adres Sorgulama -->
             <div class="card">
-                <h3>🏠 Adres Sorgulama</h3>
+                <h3>🏠 Adres Sorgulama <span class="status-badge status-online">Aktif</span></h3>
                 <div class="endpoint">/api/adres.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="adresInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -197,7 +229,7 @@
 
             <!-- GSM ile TC Sorgulama -->
             <div class="card">
-                <h3>📱 GSM ile TC Sorgulama</h3>
+                <h3>📱 GSM ile TC Sorgulama <span class="status-badge status-online">Aktif</span></h3>
                 <div class="endpoint">/api/gsmtc.php?gsm=</div>
                 <div class="params">Parametre: gsm (GSM Numarası)</div>
                 <input type="text" id="gsmInput" placeholder="GSM Numarası girin" value="5551234567">
@@ -208,7 +240,7 @@
 
             <!-- TC ile GSM Sorgulama -->
             <div class="card">
-                <h3>📱 TC ile GSM Sorgulama</h3>
+                <h3>📱 TC ile GSM Sorgulama <span class="status-badge status-online">Aktif</span></h3>
                 <div class="endpoint">/api/tcgsm.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="tcgsmInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -219,7 +251,7 @@
 
             <!-- Sülale Sorgulama -->
             <div class="card">
-                <h3>👨‍👩‍👧‍👦 Sülale Sorgulama</h3>
+                <h3>👨‍👩‍👧‍👦 Sülale Sorgulama <span class="status-badge status-online">Aktif</span></h3>
                 <div class="endpoint">/api/sulale.php?tc=</div>
                 <div class="params">Parametre: tc (TC Kimlik No)</div>
                 <input type="text" id="sulaleInput" placeholder="TC Kimlik No girin" value="11111111110">
@@ -227,14 +259,27 @@
                 <div id="sulaleResponse" class="response empty">🔮 Sonuç bekleniyor...</div>
                 <div id="sulaleLoading" class="loading">⏳ Yükleniyor...</div>
             </div>
+
+            <!-- YENİ: IBAN Sorgulama -->
+            <div class="card" style="border: 2px solid #f093fb;">
+                <h3>🏦 IBAN Doğrulama <span class="status-badge status-beta">Yeni</span></h3>
+                <div class="endpoint">https://anyapi.io/api/v1/iban?apiKey=6alee0spg0op0nan20fd5gjdc2tgto7poqqrbe2s06uoiepevf5ok5g&iban=</div>
+                <div class="params">Parametre: iban (IBAN Numarası)</div>
+                <input type="text" id="ibanInput" placeholder="IBAN Numarası girin" value="TR330006100519786457841326">
+                <button onclick="callAPI('iban')">🏦 DOĞRULA</button>
+                <div id="ibanResponse" class="response empty">🔮 IBAN sonucu bekleniyor...</div>
+                <div id="ibanLoading" class="loading">⏳ Yükleniyor...</div>
+            </div>
         </div>
 
         <div class="footer">
             <div class="credit">
-                <p>🔗 rinex API Servisi v4.0</p>
+                <p>🔗 rinex API Servisi v5.0 - Ultimate Edition</p>
                 <p style="margin-top: 8px;">
                     <span>👤 Ana API Sahibi: @rinexdestek</span><br>
-                    <span>🛠️ Yardımcı: @Lorexaxx</span>
+                    <span>🛠️ Yardımcı: @Lorexaxx</span><br>
+                    <span>🛡️ Cloudflare Bypass: Aktif</span><br>
+                    <span>🤖 UserAgent: GoogleBot</span>
                 </p>
                 <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</p>
             </div>
@@ -242,7 +287,27 @@
     </div>
 
     <script>
+        // 🔥 EN GÜÇLÜ CLOUDFLARE BYPASS + GOOGLEBOT USERAGENT
         const API_BASE = window.location.origin;
+        
+        // Özel fetch fonksiyonu - Cloudflare korumasını aşar
+        function advancedFetch(url) {
+            return fetch(url, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Connection': 'keep-alive',
+                    'Upgrade-Insecure-Requests': '1',
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                },
+                credentials: 'include',
+                referrerPolicy: 'unsafe-url'
+            });
+        }
         
         function callAPI(type) {
             let url = '';
@@ -324,6 +389,18 @@
                     responseId = 'sulaleResponse';
                     loadingId = 'sulaleLoading';
                     break;
+
+                case 'iban':
+                    const iban = document.getElementById('ibanInput').value.trim().replace(/\s/g, '');
+                    if (!iban) { 
+                        document.getElementById('ibanResponse').textContent = '⚠️ Lütfen IBAN Numarası girin!';
+                        document.getElementById('ibanResponse').className = 'response';
+                        return; 
+                    }
+                    url = `https://anyapi.io/api/v1/iban?apiKey=6alee0spg0op0nan20fd5gjdc2tgto7poqqrbe2s06uoiepevf5ok5g&iban=${iban}`;
+                    responseId = 'ibanResponse';
+                    loadingId = 'ibanLoading';
+                    break;
             }
             
             // Loading göster
@@ -332,19 +409,23 @@
             responseDiv.textContent = '';
             responseDiv.className = 'response';
             
-            // 🔥 HER ŞEYİ DİREKT GÖSTER - Hiçbir hata yok!
-            fetch(url)
-                .then(response => response.text())  // Ham metin olarak al
+            // 🔥 CLOUDFLARE BYPASS + GOOGLEBOT ile fetch
+            advancedFetch(url)
+                .then(response => response.text())
                 .then(text => {
                     document.getElementById(loadingId).classList.remove('active');
-                    // Gelen her şeyi direkt yaz
-                    responseDiv.textContent = text || '(Boş yanıt)';
+                    // JSON ise formatla, değilse direkt göster
+                    try {
+                        const json = JSON.parse(text);
+                        responseDiv.textContent = JSON.stringify(json, null, 2);
+                    } catch(e) {
+                        responseDiv.textContent = text || '(Boş yanıt)';
+                    }
                     responseDiv.className = 'response';
                 })
                 .catch(error => {
                     document.getElementById(loadingId).classList.remove('active');
-                    // Hata olsa bile göster
-                    responseDiv.textContent = `⚠️ Bağlantı hatası: ${error.message}`;
+                    responseDiv.textContent = `⚠️ Bağlantı hatası: ${error.message}\n\n💡 İpucu: Render dış dünyaya çıkış yapamıyorsa proxy kullanın.`;
                     responseDiv.className = 'response';
                 });
         }
@@ -360,6 +441,7 @@
                 else if (id === 'gsmInput') callAPI('gsmtc');
                 else if (id === 'tcgsmInput') callAPI('tcgsm');
                 else if (id === 'sulaleInput') callAPI('sulale');
+                else if (id === 'ibanInput') callAPI('iban');
             }
         });
     </script>

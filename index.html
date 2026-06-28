@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rinex API Servisi v7.0 - Ultimate</title>
+    <title>rinex API Servisi v8.0 - Ultimate</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -197,18 +197,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 rinex API Servisi v7.0</h1>
+            <h1>🚀 rinex API Servisi v8.0</h1>
             <div>
                 <span class="badge">👤 @rinexdestek</span>
-                <span class="badge">📦 Sürüm 7.0</span>
+                <span class="badge">📦 Sürüm 8.0</span>
                 <span class="badge">🔓 Bedava</span>
                 <span class="badge">🛡️ CF Bypass</span>
-                <span class="badge">🤖 GoogleBot</span>
+                <span class="badge">🤖 3 UserAgent</span>
                 <span class="badge">⚡ Force Mode</span>
                 <span class="badge">🔥 404 Geçer</span>
+                <span class="badge">🌐 Proxy</span>
             </div>
             <div class="warning">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</div>
-            <div class="info">🔥 CLOUDFLARE KORUMASI AŞILDI | 🤖 GOOGLEBOT USERAGENT | ⚡ ZORLA VERİ ALMA | 🔥 404 HATASINI GEÇER</div>
+            <div class="info">🔥 DÜNYANIN EN GÜÇLÜ CLOUDFLARE BYPASS | 🤖 3 FARKLI USERAGENT | ⚡ ZORLA VERİ ALMA | 🔥 404 HATASINI GEÇER</div>
         </div>
 
         <div class="grid">
@@ -295,14 +296,15 @@
 
         <div class="footer">
             <div class="credit">
-                <p>🔗 rinex API Servisi v7.0 - Ultimate Edition</p>
+                <p>🔗 rinex API Servisi v8.0 - Ultimate Edition</p>
                 <p style="margin-top: 8px;">
                     <span>👤 Ana API Sahibi: @rinexdestek</span><br>
                     <span>🛠️ Yardımcı: @Lorexaxx</span><br>
                     <span>🛡️ Cloudflare Bypass: Ultimate</span><br>
-                    <span>🤖 UserAgent: GoogleBot + Chrome</span><br>
+                    <span>🤖 UserAgent: GoogleBot + Chrome + Firefox</span><br>
                     <span>⚡ Force Mode: Aktif</span><br>
-                    <span>🔥 404 Bypass: Aktif</span>
+                    <span>🔥 404 Bypass: Aktif</span><br>
+                    <span>🌐 Proxy: Otomatik</span>
                 </p>
                 <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">⚠️ BU APİLER BEDAVADIR, PARAYLA SATILMASI SUÇTUR</p>
             </div>
@@ -311,19 +313,45 @@
 
     <script>
         // ============================================================
-        // 🔥 EN GÜÇLÜ CLOUDFLARE BYPASS + 404 GEÇER + ZORLA VERİ ALMA
+        // 🔥 DÜNYANIN EN GÜÇLÜ CLOUDFLARE BYPASS SİSTEMİ
         // ============================================================
         
         const API_BASE = window.location.origin;
         
-        // 🌟 ULTIMATE FETCH - 404 DAHİL HER ŞEYİ GEÇER
-        function ultimateFetch(url) {
+        // 🤖 3 FARKLI USERAGENT
+        const USER_AGENTS = [
+            'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0'
+        ];
+        
+        // 🌐 PROXY SERVİSLERİ
+        const PROXIES = [
+            '',
+            'https://corsproxy.io/?',
+            'https://api.allorigins.win/raw?url=',
+            'https://cors-anywhere.herokuapp.com/'
+        ];
+        
+        // 🔥 ULTIMATE FETCH - 3 USERAGENT + PROXY + CLOUDFLARE BYPASS
+        function ultimateFetch(url, attempt = 0) {
             return new Promise((resolve) => {
+                // UserAgent seç
+                const userAgent = USER_AGENTS[attempt % USER_AGENTS.length];
+                
+                // Proxy seç (ilk denemede proxy yok)
+                let proxyUrl = url;
+                if (attempt > 0 && attempt < PROXIES.length) {
+                    proxyUrl = PROXIES[attempt] + encodeURIComponent(url);
+                }
+                
+                console.log(`🔄 Deneme ${attempt + 1}: ${userAgent.substring(0, 30)}...`);
+                
                 // 1. YÖNTEM: Fetch ile dene
-                fetch(url, {
+                fetch(proxyUrl, {
                     method: 'GET',
                     headers: {
-                        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                        'User-Agent': userAgent,
                         'Accept': '*/*',
                         'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
                         'Accept-Encoding': 'gzip, deflate, br',
@@ -334,19 +362,22 @@
                         'Sec-Fetch-Mode': 'navigate',
                         'Sec-Fetch-Site': 'none',
                         'Sec-Fetch-User': '?1',
-                        'Upgrade-Insecure-Requests': '1'
+                        'Upgrade-Insecure-Requests': '1',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     credentials: 'include',
                     referrer: 'https://www.google.com/',
                     referrerPolicy: 'unsafe-url'
                 })
                 .then(response => {
-                    // 404 olsa bile text olarak al
                     return response.text().then(text => {
                         resolve({ 
                             status: response.status, 
                             text: text,
-                            ok: response.ok
+                            ok: response.ok,
+                            attempt: attempt,
+                            userAgent: userAgent,
+                            proxy: proxyUrl !== url ? 'Proxy' : 'Direct'
                         });
                     });
                 })
@@ -354,40 +385,65 @@
                     // 2. YÖNTEM: XMLHttpRequest ile dene
                     try {
                         const xhr = new XMLHttpRequest();
-                        xhr.open('GET', url, true);
-                        xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
+                        xhr.open('GET', proxyUrl, true);
+                        xhr.setRequestHeader('User-Agent', userAgent);
                         xhr.setRequestHeader('Accept', '*/*');
                         xhr.setRequestHeader('Cache-Control', 'no-cache');
+                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                         xhr.timeout = 30000;
                         
                         xhr.onload = function() {
                             resolve({ 
                                 status: xhr.status, 
                                 text: xhr.responseText,
-                                ok: xhr.status >= 200 && xhr.status < 300
+                                ok: xhr.status >= 200 && xhr.status < 300,
+                                attempt: attempt,
+                                userAgent: userAgent,
+                                proxy: proxyUrl !== url ? 'Proxy' : 'Direct'
                             });
                         };
                         
                         xhr.onerror = function() {
-                            // 3. YÖNTEM: Boş cevap
-                            resolve({ 
-                                status: 0, 
-                                text: '⚠️ Bağlantı kurulamadı. APIye ulaşılamıyor.\n\n💡 Çözüm: Proxy veya VPN dene.',
-                                ok: false
-                            });
+                            // 3. YÖNTEM: Tekrar dene (farklı UserAgent ile)
+                            if (attempt < 6) { // 3 UserAgent x 2 Proxy = 6 deneme
+                                setTimeout(() => {
+                                    ultimateFetch(url, attempt + 1).then(resolve);
+                                }, 1000);
+                            } else {
+                                resolve({ 
+                                    status: 0, 
+                                    text: '⚠️ TÜM BAĞLANTI YÖNTEMLERİ BAŞARISIZ!\n\n' +
+                                          '🔧 ÇÖZÜM ÖNERİLERİ:\n' +
+                                          '1. VPN veya Tor kullanarak dene\n' +
+                                          '2. Farklı bir ağ bağlantısı dene\n' +
+                                          '3. Proxy servisi kullan (corsproxy.io vb.)\n' +
+                                          '4. Cloudflare koruması çok güçlü olabilir\n\n' +
+                                          '📞 DESTEK: @rinexdestek | @Lorexaxx',
+                                    ok: false,
+                                    attempt: attempt,
+                                    userAgent: userAgent,
+                                    proxy: 'Failed'
+                                });
+                            }
                         };
                         
                         xhr.send();
                     } catch(e) {
-                        // 4. YÖNTEM: Tamamen çaresiz
-                        resolve({ 
-                            status: 0, 
-                            text: '❌ BAĞLANTI YÖNTEMLERİ BAŞARISIZ!\n\n' +
-                                  '🌐 Render dış dünyaya istek atamıyor olabilir.\n' +
-                                  '🔄 Proxy veya CORS proxy kullan.\n\n' +
-                                  '📞 Destek: @rinexdestek | @Lorexaxx',
-                            ok: false
-                        });
+                        if (attempt < 6) {
+                            setTimeout(() => {
+                                ultimateFetch(url, attempt + 1).then(resolve);
+                            }, 1000);
+                        } else {
+                            resolve({ 
+                                status: 0, 
+                                text: '❌ KRİTİK HATA: ' + e.message + '\n\n' +
+                                      '📞 DESTEK: @rinexdestek | @Lorexaxx',
+                                ok: false,
+                                attempt: attempt,
+                                userAgent: userAgent,
+                                proxy: 'Failed'
+                            });
+                        }
                     }
                 });
             });
@@ -496,14 +552,21 @@
             // ============================================================
             // ⚡ ZORLA VERİ ALMA - 404 DAHİL HER ŞEYİ GEÇER
             // ============================================================
-            ultimateFetch(url)
+            ultimateFetch(url, 0)
                 .then(result => {
                     document.getElementById(loadingId).classList.remove('active');
                     
                     let text = result.text || '(Boş yanıt)';
                     let responseClass = 'response';
                     
-                    // 🔥 404 olsa bile veriyi göster
+                    // Bilgi ekle
+                    let info = `🔍 Deneme: ${result.attempt + 1}/6\n`;
+                    info += `🤖 UserAgent: ${result.userAgent.substring(0, 40)}...\n`;
+                    info += `🌐 Proxy: ${result.proxy}\n`;
+                    info += `📊 Durum: ${result.status || 'Bağlantı Yok'}\n`;
+                    info += `${'='.repeat(50)}\n\n`;
+                    
+                    // 404 olsa bile veriyi göster
                     if (result.status === 404) {
                         text = `🔴 HTTP 404 - Not Found\n${'='.repeat(50)}\n\n${text}`;
                     } else if (result.status !== 200 && result.status !== 0) {
@@ -513,7 +576,6 @@
                     // Format tespiti ve renklendirme
                     try {
                         const json = JSON.parse(text);
-                        // JSON ise formatla ve yeşil border
                         text = JSON.stringify(json, null, 2);
                         responseClass = 'response json';
                     } catch(e) {
@@ -526,17 +588,17 @@
                         }
                     }
                     
-                    responseDiv.textContent = text;
+                    responseDiv.textContent = info + text;
                     responseDiv.className = responseClass;
                 })
                 .catch(error => {
                     document.getElementById(loadingId).classList.remove('active');
-                    // HATA OLSA BİLE GÖSTER
                     responseDiv.textContent = `❌ KRİTİK HATA: ${error.message}\n\n` +
                         `🔧 ÇÖZÜM ÖNERİLERİ:\n` +
-                        `1. Render dış dünyaya çıkış yapamıyorsa → Proxy kullan\n` +
-                        `2. Cloudflare engelliyorsa → VPN veya Tor dene\n` +
-                        `3. CORS hatası varsa → CORS proxy kullan\n\n` +
+                        `1. VPN veya Tor kullanarak dene\n` +
+                        `2. Farklı bir ağ bağlantısı dene\n` +
+                        `3. Proxy servisi kullan (corsproxy.io vb.)\n` +
+                        `4. Cloudflare koruması çok güçlü olabilir\n\n` +
                         `📞 DESTEK: @rinexdestek | @Lorexaxx`;
                     responseDiv.className = 'response error';
                 });
